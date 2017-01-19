@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.awt.event.ActionEvent;
 import java.awt.List;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class Sortiranje extends JFrame {
 
@@ -54,7 +57,7 @@ public class Sortiranje extends JFrame {
 	public Sortiranje() {
 		setTitle("Or\u010Di\u0107 Stefan IT11-2015 / Sortiranje");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 756, 424);
 		pnlOsnovni = new JPanel();
 		pnlOsnovni.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(pnlOsnovni);
@@ -62,7 +65,22 @@ public class Sortiranje extends JFrame {
 
 		JPanel pnlListe = new JPanel();
 		pnlOsnovni.add(pnlListe, BorderLayout.CENTER);
-		pnlListe.setLayout(new MigLayout("", "[95.00,grow][119.00][138.00][155.00][94.00,grow][130.00]", "[][][39.00][84.00,grow]"));
+		GridBagLayout gbl_pnlListe = new GridBagLayout();
+		gbl_pnlListe.columnWidths = new int[]{106, 109, 88, 150, 0};
+		gbl_pnlListe.rowHeights = new int[]{14, 23, 38, 159, 0};
+		gbl_pnlListe.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_pnlListe.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		pnlListe.setLayout(gbl_pnlListe);
+
+		JLabel lblPodnaslov = new JLabel("Sortiranje liste kvadrata");
+		GridBagConstraints gbc_lblPodnaslov = new GridBagConstraints();
+		gbc_lblPodnaslov.anchor = GridBagConstraints.NORTH;
+		gbc_lblPodnaslov.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPodnaslov.gridwidth = 4;
+		gbc_lblPodnaslov.gridx = 0;
+		gbc_lblPodnaslov.gridy = 0;
+		pnlListe.add(lblPodnaslov, gbc_lblPodnaslov);
+		lblPodnaslov.setHorizontalAlignment(SwingConstants.CENTER);
 
 		JButton btnDodajKvadratU = new JButton("Dodaj kvadrat u listu");
 		btnDodajKvadratU.addActionListener(new ActionListener() {
@@ -72,7 +90,7 @@ public class Sortiranje extends JFrame {
 				Kvadrat pomocniKvadrat = dlgK.pomKvadrat;
 				lstKvadrata.add(pomocniKvadrat);
 				sortKvadrati.add(pomocniKvadrat);
-				
+
 				lstLista.removeAll();
 				lstSortirana.removeAll();
 				sortKvadrati.sort(null);
@@ -83,27 +101,50 @@ public class Sortiranje extends JFrame {
 				for (Kvadrat kvadrat : sortKvadrati) {
 					lstSortirana.add(kvadrat.opis());
 				}
-				
+
 				System.out.println();
 			}
 		});
-		
-				JLabel lblPodnaslov = new JLabel("Sortiranje liste kvadrata");
-				pnlListe.add(lblPodnaslov, "cell 2 0 2 1,alignx center");
-				lblPodnaslov.setHorizontalAlignment(SwingConstants.CENTER);
-		pnlListe.add(btnDodajKvadratU, "cell 2 1 2 1,growx");
+		GridBagConstraints gbc_btnDodajKvadratU = new GridBagConstraints();
+		gbc_btnDodajKvadratU.anchor = GridBagConstraints.NORTH;
+		gbc_btnDodajKvadratU.insets = new Insets(0, 0, 5, 0);
+		gbc_btnDodajKvadratU.gridwidth = 4;
+		gbc_btnDodajKvadratU.gridx = 0;
+		gbc_btnDodajKvadratU.gridy = 1;
+		pnlListe.add(btnDodajKvadratU, gbc_btnDodajKvadratU);
 
 		JLabel lblLista = new JLabel("Lista");
-		pnlListe.add(lblLista, "cell 0 2 3 1,alignx center,aligny center");
+		GridBagConstraints gbc_lblLista = new GridBagConstraints();
+		gbc_lblLista.gridwidth = 2;
+		gbc_lblLista.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLista.gridx = 0;
+		gbc_lblLista.gridy = 2;
+		pnlListe.add(lblLista, gbc_lblLista);
 
 		JLabel lblSortiranaLista = new JLabel("Sortirana lista");
-		pnlListe.add(lblSortiranaLista, "cell 3 2 3 1,alignx center,aligny center");
-		
+		GridBagConstraints gbc_lblSortiranaLista = new GridBagConstraints();
+		gbc_lblSortiranaLista.gridwidth = 2;
+		gbc_lblSortiranaLista.insets = new Insets(0, 0, 5, 0);
+		gbc_lblSortiranaLista.gridx = 2;
+		gbc_lblSortiranaLista.gridy = 2;
+		pnlListe.add(lblSortiranaLista, gbc_lblSortiranaLista);
+
 		lstLista = new List();
-		pnlListe.add(lstLista, "cell 0 3 3 1,growx,aligny top");
-		
+		GridBagConstraints gbc_lstLista = new GridBagConstraints();
+		gbc_lstLista.gridwidth = 2;
+		gbc_lstLista.fill = GridBagConstraints.BOTH;
+		gbc_lstLista.insets = new Insets(0, 0, 0, 5);
+		gbc_lstLista.gridx = 0;
+		gbc_lstLista.gridy = 3;
+		pnlListe.add(lstLista, gbc_lstLista);
+
 		lstSortirana = new List();
-		pnlListe.add(lstSortirana, "cell 3 3 3 1,growx,aligny top");
+		GridBagConstraints gbc_lstSortirana = new GridBagConstraints();
+		gbc_lstSortirana.fill = GridBagConstraints.BOTH;
+		gbc_lstSortirana.gridwidth = 2;
+		gbc_lstSortirana.gridx = 2;
+		gbc_lstSortirana.gridy = 3;
+		pnlListe.add(lstSortirana, gbc_lstSortirana);
 	}
 
 }

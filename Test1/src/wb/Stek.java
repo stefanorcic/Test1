@@ -36,8 +36,8 @@ public class Stek extends JFrame {
 
 	private JPanel pnlOsnovni;
 	private Stack<Kvadrat> stekKvadrata = new Stack<Kvadrat>();
-	private DefaultListModel listaKvadrata = new DefaultListModel();
 	private JLabel lblObimSteka;
+	List listaKvadrata;
 	/**
 	 * Launch the application.
 	 */
@@ -60,63 +60,87 @@ public class Stek extends JFrame {
 	public Stek() {
 		setTitle("Or\u010Di\u0107 Stefan IT11-2015 / Stek");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 416, 330);
+		setBounds(100, 100, 700, 402);
 		pnlOsnovni = new JPanel();
 		pnlOsnovni.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(pnlOsnovni);
-						pnlOsnovni.setLayout(new BorderLayout(0, 0));
-				
-						JPanel pnlCentar = new JPanel();
-						pnlOsnovni.add(pnlCentar, BorderLayout.NORTH);
-						
-						
-						
-						
-								JButton btnDodajKvadrat = new JButton("Dodaj kvadrat");
-								btnDodajKvadrat.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent e) {
-										DlgKvadrat dlgK = new DlgKvadrat();
-										dlgK.setVisible(true);
-										Kvadrat pomocniKvadrat = dlgK.pomKvadrat;
-										stekKvadrata.push(pomocniKvadrat);
-										listaKvadrata.add(0,pomocniKvadrat.opis());
-										lblObimSteka.setText("Obim steka: " + stekKvadrata.size());
-										
-									}
-								});
-										pnlCentar.setLayout(new MigLayout("", "[400.00px]", "[14px][23px][23px][182.00]"));
-										
-										JLabel lblSuperProgramBrata = new JLabel("Super program brata orcica");
-										lblSuperProgramBrata.setHorizontalAlignment(SwingConstants.CENTER);
-										pnlCentar.add(lblSuperProgramBrata, "cell 0 0,growx");
-										pnlCentar.add(btnDodajKvadrat, "cell 0 1,growx,aligny bottom");
-										
-												JButton btnIzuzmiKvadrat = new JButton("Izuzmi kvadrat");
-												btnIzuzmiKvadrat.addActionListener(new ActionListener() {
-													public void actionPerformed(ActionEvent e) {
-														try{
-															Kvadrat pomocniKvadrat = stekKvadrata.pop();
-															stekKvadrata.push(pomocniKvadrat);
-															int opcija = JOptionPane.showOptionDialog(null, pomocniKvadrat.opis(),"Izuzimanje kvadrata" , JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-															if(opcija == 0){
-																pomocniKvadrat = stekKvadrata.pop();
-																System.out.println(pomocniKvadrat.opis());
-																listaKvadrata.remove(0);
-																lblObimSteka.setText("Obim steka: " + stekKvadrata.size());
-															}
-														}catch (Exception exc){
-															JOptionPane.showMessageDialog(null, "Stek je prazan!", "Greska!", JOptionPane.ERROR_MESSAGE);
-														}
-													}
-												});
-												pnlCentar.add(btnIzuzmiKvadrat, "cell 0 2,growx,aligny center");
-												
-												List list = new List();
-												pnlCentar.add(list, "cell 0 3,grow");
-														
-														lblObimSteka = new JLabel("");
-														pnlOsnovni.add(lblObimSteka, BorderLayout.SOUTH);
-														lblObimSteka.setText("Obim steka: " + stekKvadrata.size());
+		pnlOsnovni.setLayout(new BorderLayout(0, 0));
+
+		JPanel pnlCentar = new JPanel();
+		pnlOsnovni.add(pnlCentar, BorderLayout.NORTH);
+		GridBagLayout gbl_pnlCentar = new GridBagLayout();
+		gbl_pnlCentar.columnWidths = new int[]{400, 0};
+		gbl_pnlCentar.rowHeights = new int[]{14, 23, 23, 244, 0};
+		gbl_pnlCentar.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_pnlCentar.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		pnlCentar.setLayout(gbl_pnlCentar);
+
+
+
+
+		JButton btnDodajKvadrat = new JButton("Dodaj kvadrat");
+		btnDodajKvadrat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DlgKvadrat dlgK = new DlgKvadrat();
+				dlgK.setVisible(true);
+				Kvadrat pomocniKvadrat = dlgK.pomKvadrat;
+				stekKvadrata.push(pomocniKvadrat);
+				listaKvadrata.add(pomocniKvadrat.opis(),0);
+				lblObimSteka.setText("Obim steka: " + stekKvadrata.size());
+
+			}
+		});
+
+		JLabel lblSuperProgramBrata = new JLabel("Super program brata orcica");
+		lblSuperProgramBrata.setHorizontalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblSuperProgramBrata = new GridBagConstraints();
+		gbc_lblSuperProgramBrata.anchor = GridBagConstraints.NORTH;
+		gbc_lblSuperProgramBrata.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblSuperProgramBrata.insets = new Insets(0, 0, 5, 0);
+		gbc_lblSuperProgramBrata.gridx = 0;
+		gbc_lblSuperProgramBrata.gridy = 0;
+		pnlCentar.add(lblSuperProgramBrata, gbc_lblSuperProgramBrata);
+		GridBagConstraints gbc_btnDodajKvadrat = new GridBagConstraints();
+		gbc_btnDodajKvadrat.anchor = GridBagConstraints.SOUTH;
+		gbc_btnDodajKvadrat.insets = new Insets(0, 0, 5, 0);
+		gbc_btnDodajKvadrat.gridx = 0;
+		gbc_btnDodajKvadrat.gridy = 1;
+		pnlCentar.add(btnDodajKvadrat, gbc_btnDodajKvadrat);
+
+		JButton btnIzuzmiKvadrat = new JButton("Izuzmi kvadrat");
+		btnIzuzmiKvadrat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try{
+					Kvadrat pomocniKvadrat = stekKvadrata.pop();
+					stekKvadrata.push(pomocniKvadrat);
+					int opcija = JOptionPane.showOptionDialog(null, pomocniKvadrat.opis(),"Izuzimanje kvadrata" , JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+					if(opcija == 0){
+						pomocniKvadrat = stekKvadrata.pop();
+						System.out.println(pomocniKvadrat.opis());
+						listaKvadrata.remove(0);
+						lblObimSteka.setText("Obim steka: " + stekKvadrata.size());
+					}
+				}catch (Exception exc){
+					JOptionPane.showMessageDialog(null, "Stek je prazan!", "Greska!", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		GridBagConstraints gbc_btnIzuzmiKvadrat = new GridBagConstraints();
+		gbc_btnIzuzmiKvadrat.insets = new Insets(0, 0, 5, 0);
+		gbc_btnIzuzmiKvadrat.gridx = 0;
+		gbc_btnIzuzmiKvadrat.gridy = 2;
+		pnlCentar.add(btnIzuzmiKvadrat, gbc_btnIzuzmiKvadrat);
+
+		listaKvadrata = new List();
+		GridBagConstraints gbc_listaKvadrata1 = new GridBagConstraints();
+		gbc_listaKvadrata1.fill = GridBagConstraints.BOTH;
+		gbc_listaKvadrata1.gridx = 0;
+		gbc_listaKvadrata1.gridy = 3;
+		pnlCentar.add(listaKvadrata, gbc_listaKvadrata1);
+
+		lblObimSteka = new JLabel("");
+		pnlOsnovni.add(lblObimSteka, BorderLayout.SOUTH);
+		lblObimSteka.setText("Obim steka: " + stekKvadrata.size());
 	}
 
 }
