@@ -111,8 +111,7 @@ public class Stek extends JFrame {
 		btnIzuzmiKvadrat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try{
-					Kvadrat pomocniKvadrat = stekKvadrata.pop();
-					stekKvadrata.push(pomocniKvadrat);
+					Kvadrat pomocniKvadrat = stekKvadrata.peek();
 					int opcija = JOptionPane.showOptionDialog(null, pomocniKvadrat.opis(),"Izuzimanje kvadrata" , JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 					if(opcija == 0){
 						pomocniKvadrat = stekKvadrata.pop();

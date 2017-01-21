@@ -2,6 +2,7 @@ package wb;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Graphics;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,6 +19,7 @@ import javax.swing.JOptionPane;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
+import com.sun.javafx.geom.Rectangle;
 
 import geometrija.Krug;
 import geometrija.Kvadrat;
@@ -34,22 +36,47 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.List;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import javax.swing.JTextField;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.FlowLayout;
 
 public class Crtanje extends JFrame {
 
 	private JPanel pnlOsnovni;
-
+	private JPanel pnlPaletaZaCrtanje;
 	private JButton kliknutoDugme = null;
+	private JButton btnObrisi;
+	private JButton btnBojaUnutrasnjosti;
+	private JButton btnBojaIvice;
 	private Oblik oblik = null;
 	private Oblik trenutnoSelektovan = null;
 	private int brojKlikova = 0;
 	private Stack<Oblik> stekOblika = new Stack<Oblik>();
-	private JPanel pnlPaletaZaCrtanje;
+	private ArrayList<Oblik> listaOblika = new ArrayList<Oblik>();
+	private JTextField txtPocetnaX;
+	private JTextField txtPocetnaY;
+	private JTextField txtKrajnjaX;
+	private JTextField txtKrajnjaY;
+	private JTextField txtDuzina;
+	private JTextField txtSirina;
+
+	private JLabel lblTackaP;
+	private JLabel lblDuzina;
+	private JLabel lblTackaK;
+	private JLabel lblPocetnaX;
+	private JLabel lblPocetnaY;
+	private JLabel lblSirina;
+	private JLabel lblKrajnjaY;
+	private JLabel lblKrajnjaX;
+
 	/**
 	 * Launch the application.
 	 */
@@ -72,7 +99,7 @@ public class Crtanje extends JFrame {
 	public Crtanje() {
 		setTitle("Or\u010Di\u0107 Stefan IT11-2015 / Crtanje");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 605, 419);
+		setBounds(100, 100, 765, 562);
 		pnlOsnovni = new JPanel();
 		pnlOsnovni.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(pnlOsnovni);
@@ -80,34 +107,70 @@ public class Crtanje extends JFrame {
 
 		JPanel pnlAlat = new JPanel();
 		pnlOsnovni.add(pnlAlat, BorderLayout.NORTH);
-		pnlAlat.setLayout(new BorderLayout(0, 0));
+		pnlAlat.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JPanel pnlOpcije = new JPanel();
-		pnlAlat.add(pnlOpcije, BorderLayout.EAST);
-		pnlOpcije.setLayout(new MigLayout("", "[101.00][114.00px]", "[14px][]"));
+		JPanel pnlOblici = new JPanel();
+		pnlAlat.add(pnlOblici);
 
-		JLabel lblUpravljanje = new JLabel("Upravljanje oblicima");
-		pnlOpcije.add(lblUpravljanje, "cell 0 0 2 1,alignx center,aligny top");
 
-		JButton btnSelektuj = new JButton("Selektuj");
-		btnSelektuj.addActionListener(new ActionListener() {
+
+		JButton btnLinija = new JButton("Linija");
+		btnLinija.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				kliknutoDugme = (JButton) e.getSource();
+				kliknutoDugme = (JButton)e.getSource();
 			}
 		});
-		pnlOpcije.add(btnSelektuj, "cell 0 1,growx,aligny center");
 
-		JButton btnObrisi = new JButton("Obri\u0161i");
-		btnObrisi.setEnabled(false);
-		pnlOpcije.add(btnObrisi, "cell 1 1,growx,aligny center");
+		JButton btnTacka = new JButton("Ta\u010Dka");
+		btnTacka.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				kliknutoDugme = (JButton)e.getSource();
+			}
+		});
+		pnlOblici.setLayout(new MigLayout("", "[62px][97px]", "[32.00px][50.00px][46.00px]"));
+
+		JLabel lblOblici = new JLabel("Oblici");
+		pnlOblici.add(lblOblici, "cell 0 0,alignx center,growy");
+		pnlOblici.add(btnTacka, "cell 1 0,growx,aligny center");
+		pnlOblici.add(btnLinija, "cell 0 1,growx,aligny center");
+
+		JButton btnKrug = new JButton("Krug");
+		btnKrug.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				kliknutoDugme = (JButton)e.getSource();
+				trenutnoSelektovan = null;
+				ponovoNacrtaj();
+			}
+		});
+
+		JButton btnKvadrat = new JButton("Kvadrat");
+		btnKvadrat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				kliknutoDugme = (JButton)e.getSource();
+				trenutnoSelektovan = null;
+				ponovoNacrtaj();
+			}
+		});
+		pnlOblici.add(btnKvadrat, "cell 1 1,growx,aligny center");
+		pnlOblici.add(btnKrug, "cell 0 2,growx,aligny center");
+
+		JButton btnPravougaonik = new JButton("Pravougaonik");
+		btnPravougaonik.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				kliknutoDugme = (JButton)e.getSource();
+				trenutnoSelektovan = null;
+				ponovoNacrtaj();
+			}
+		});
+		pnlOblici.add(btnPravougaonik, "cell 1 2,growx,aligny center");
 
 
 
 		JPanel pnlBoje = new JPanel();
-		pnlAlat.add(pnlBoje, BorderLayout.CENTER);
+		pnlAlat.add(pnlBoje);
 		GridBagLayout gbl_pnlBoje = new GridBagLayout();
 		gbl_pnlBoje.columnWidths = new int[]{54, 66, 0};
-		gbl_pnlBoje.rowHeights = new int[]{0, 28, 0, 0};
+		gbl_pnlBoje.rowHeights = new int[]{29, 90, 0, 0};
 		gbl_pnlBoje.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 		gbl_pnlBoje.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		pnlBoje.setLayout(gbl_pnlBoje);
@@ -121,11 +184,16 @@ public class Crtanje extends JFrame {
 		gbc_lblBoja.gridy = 0;
 		pnlBoje.add(lblBoja, gbc_lblBoja);
 
-		JButton btnBojaUnutrasnjosti = new JButton("");
+		btnBojaUnutrasnjosti = new JButton("");
 		btnBojaUnutrasnjosti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				izaberiBoju((JButton)e.getSource());
-				((PovrsinskiOblik)trenutnoSelektovan).setBojaUnutra(btnBojaUnutrasnjosti.getBackground());;
+				if (trenutnoSelektovan instanceof PovrsinskiOblik) {
+					((PovrsinskiOblik)trenutnoSelektovan).setBojaUnutra(btnBojaUnutrasnjosti.getBackground());
+				} else{
+					btnBojaUnutrasnjosti.setBackground(Color.white);
+				}
+
 				ponovoNacrtaj();
 			}
 		});
@@ -137,12 +205,18 @@ public class Crtanje extends JFrame {
 		gbc_btnBojaUnutrasnjosti.gridy = 1;
 		pnlBoje.add(btnBojaUnutrasnjosti, gbc_btnBojaUnutrasnjosti);
 
-		JButton btnBojaIvice = new JButton("");
+		btnBojaIvice = new JButton("");
 		btnBojaIvice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				izaberiBoju((JButton)e.getSource());
-				trenutnoSelektovan.setBoja(btnBojaIvice.getBackground());
+				if (trenutnoSelektovan instanceof PovrsinskiOblik) {
+					((PovrsinskiOblik)trenutnoSelektovan).setBoja(btnBojaIvice.getBackground());
+				} else if(trenutnoSelektovan instanceof Oblik){
+					trenutnoSelektovan.setBoja(btnBojaIvice.getBackground());
+				}
+
 				ponovoNacrtaj();
+
 			}
 		});
 		btnBojaIvice.setBackground(Color.BLACK);
@@ -166,55 +240,217 @@ public class Crtanje extends JFrame {
 		gbc_lblIvica.gridy = 2;
 		pnlBoje.add(lblIvica, gbc_lblIvica);
 
-		JPanel pnlOblici = new JPanel();
-		pnlAlat.add(pnlOblici, BorderLayout.WEST);
+		JPanel pnlOpcije = new JPanel();
+		pnlAlat.add(pnlOpcije);
+		pnlOpcije.setLayout(new MigLayout("", "[26.00][101.00,grow][29.00][83.00px,grow][]", "[14px][][][][][]"));
 
+		JLabel lblUpravljanje = new JLabel("Upravljanje oblicima");
+		pnlOpcije.add(lblUpravljanje, "cell 1 1,alignx center,aligny top");
 
-
-		JButton btnLinija = new JButton("Linija");
-		btnLinija.addActionListener(new ActionListener() {
+		JButton btnSelektuj = new JButton("Selektuj");
+		btnSelektuj.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				kliknutoDugme = (JButton)e.getSource();
+				kliknutoDugme = (JButton) e.getSource();
+				if(trenutnoSelektovan != null){
+					trenutnoSelektovan = null;
+					ponovoNacrtaj();
+				}
+			}
+		});
+		pnlOpcije.add(btnSelektuj, "cell 3 1,growx,aligny center");
+
+		btnObrisi = new JButton("Obri\u0161i");
+		btnObrisi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int opcija = JOptionPane.showOptionDialog(null, "Da li ste sigurni da želite da obrisete selektovan oblik","Brisanje selektovanog oblika" , JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+				if(opcija == 0){
+					stekOblika.removeElement(trenutnoSelektovan);
+					trenutnoSelektovan = null;
+					ponovoNacrtaj();
+					System.out.println(stekOblika);
+				}
+			}
+		});
+		btnObrisi.setEnabled(false);
+		pnlOpcije.add(btnObrisi, "cell 4 1,growx,aligny center");
+
+		lblTackaP = new JLabel("");
+		pnlOpcije.add(lblTackaP, "cell 1 2,alignx left");
+
+		lblTackaK = new JLabel("");
+		pnlOpcije.add(lblTackaK, "cell 3 2");
+
+		lblDuzina = new JLabel("");
+		pnlOpcije.add(lblDuzina, "cell 4 2");
+
+		lblPocetnaX = new JLabel("X");
+		pnlOpcije.add(lblPocetnaX, "cell 0 3,alignx right");
+
+		txtPocetnaX = new JTextField();
+		txtPocetnaX.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int pomocna = 0;
+				try{
+					if (trenutnoSelektovan instanceof Tacka) {
+						pomocna = ((Tacka)trenutnoSelektovan).getX();
+						((Tacka)trenutnoSelektovan).setX(Integer.parseInt(txtPocetnaX.getText()));
+					} else if(trenutnoSelektovan instanceof Linija) {
+						pomocna = ((Linija)trenutnoSelektovan).gettPocetna().getX();
+						((Linija)trenutnoSelektovan).gettPocetna().setX(Integer.parseInt(txtPocetnaX.getText()));
+					} else if(trenutnoSelektovan instanceof Krug){
+						pomocna = ((Krug)trenutnoSelektovan).getCentar().getX();
+						((Krug)trenutnoSelektovan).getCentar().setX(Integer.parseInt(txtPocetnaX.getText()));
+					} else if(trenutnoSelektovan instanceof Pravougaonik){
+						pomocna = ((Pravougaonik)trenutnoSelektovan).getGoreLevo().getX();
+						((Pravougaonik)trenutnoSelektovan).getGoreLevo().setX(Integer.parseInt(txtPocetnaX.getText()));
+					} else if(trenutnoSelektovan instanceof Kvadrat){
+						pomocna = ((Kvadrat)trenutnoSelektovan).getGoreLevo().getX();
+						((Kvadrat)trenutnoSelektovan).getGoreLevo().setX(Integer.parseInt(txtPocetnaX.getText()));
+					}
+				}catch (Exception ex) {
+					txtPocetnaX.setText("" + pomocna);
+					JOptionPane.showMessageDialog(null, "Unesite pozitivan ceo broj","Greska u unosu", JOptionPane.ERROR_MESSAGE);
+				}
+				uzmiSveVrednostiTxt();
+				ponovoNacrtaj();
+			}
+		});
+		pnlOpcije.add(txtPocetnaX, "cell 1 3,alignx left,aligny center");
+		txtPocetnaX.setColumns(10);
+
+		txtDuzina = new JTextField();
+		txtDuzina.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int pomocna = 0;
+				try{
+					if (trenutnoSelektovan instanceof Krug){
+						pomocna = ((Krug)trenutnoSelektovan).getR();
+						((Krug)trenutnoSelektovan).setR(Integer.parseInt(txtDuzina.getText()));
+					} else if(trenutnoSelektovan instanceof Pravougaonik){
+						pomocna = ((Pravougaonik)trenutnoSelektovan).getVisina();
+						((Pravougaonik)trenutnoSelektovan).setVisina(Integer.parseInt(txtDuzina.getText()));
+					} else if(trenutnoSelektovan instanceof Kvadrat){
+						pomocna = ((Kvadrat)trenutnoSelektovan).getDuzinaStranice();
+						((Kvadrat)trenutnoSelektovan).setDuzinaStranice(Integer.parseInt(txtDuzina.getText()));
+					}
+				}catch (Exception ex) {
+					txtDuzina.setText("" + pomocna);
+					JOptionPane.showMessageDialog(null, "Unesite pozitivan ceo broj","Greska u unosu", JOptionPane.ERROR_MESSAGE);
+				}
+				uzmiSveVrednostiTxt();
+				ponovoNacrtaj();
 			}
 		});
 
-		JButton btnTacka = new JButton("Ta\u010Dka");
-		btnTacka.addActionListener(new ActionListener() {
+		txtKrajnjaX = new JTextField();
+		txtKrajnjaX.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				kliknutoDugme = (JButton)e.getSource();
+				int pomocna = 0;
+				try{
+					if (trenutnoSelektovan instanceof Linija) {
+						pomocna = ((Linija)trenutnoSelektovan).gettKrajnja().getX();
+						((Linija)trenutnoSelektovan).gettKrajnja().setX(Integer.parseInt(txtKrajnjaX.getText()));
+					}
+				}catch (Exception ex) {
+					txtKrajnjaX.setText("" + pomocna);
+					JOptionPane.showMessageDialog(null, "Unesite pozitivan ceo broj","Greska u unosu", JOptionPane.ERROR_MESSAGE);
+				}
+				uzmiSveVrednostiTxt();
+				ponovoNacrtaj();
 			}
 		});
-		pnlOblici.setLayout(new MigLayout("", "[62px][97px]", "[23px][23px][23px]"));
 
-		JLabel lblOblici = new JLabel("Oblici");
-		pnlOblici.add(lblOblici, "cell 0 0,alignx center,aligny center");
-		pnlOblici.add(btnTacka, "cell 1 0,growx,aligny center");
-		pnlOblici.add(btnLinija, "cell 0 1,growx,aligny center");
+		lblKrajnjaX = new JLabel("X");
+		pnlOpcije.add(lblKrajnjaX, "cell 2 3,alignx trailing");
+		pnlOpcije.add(txtKrajnjaX, "cell 3 3,alignx left");
+		txtKrajnjaX.setColumns(10);
+		pnlOpcije.add(txtDuzina, "cell 4 3,alignx left");
+		txtDuzina.setColumns(10);
 
-		JButton btnKrug = new JButton("Krug");
-		btnKrug.addActionListener(new ActionListener() {
+		lblPocetnaY = new JLabel("Y");
+		pnlOpcije.add(lblPocetnaY, "cell 0 4,alignx right");
+
+		txtPocetnaY = new JTextField();
+		txtPocetnaY.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				kliknutoDugme = (JButton)e.getSource();
+				int pomocna = 0;
+				try{
+					if (trenutnoSelektovan instanceof Tacka) {
+						pomocna = ((Tacka)trenutnoSelektovan).getY();
+						((Tacka)trenutnoSelektovan).setY(Integer.parseInt(txtPocetnaY.getText()));
+						uzmiSveVrednostiTxt();
+					} else if(trenutnoSelektovan instanceof Linija) {
+						pomocna = ((Linija)trenutnoSelektovan).gettPocetna().getY();
+						((Linija)trenutnoSelektovan).gettPocetna().setY(Integer.parseInt(txtPocetnaY.getText()));
+						uzmiSveVrednostiTxt();
+					} else if(trenutnoSelektovan instanceof Krug){
+						pomocna = ((Krug)trenutnoSelektovan).getCentar().getY();
+						((Krug)trenutnoSelektovan).getCentar().setY(Integer.parseInt(txtPocetnaY.getText()));
+						uzmiSveVrednostiTxt();
+					} else if(trenutnoSelektovan instanceof Pravougaonik){
+						pomocna = ((Pravougaonik)trenutnoSelektovan).getGoreLevo().getY();
+						((Pravougaonik)trenutnoSelektovan).getGoreLevo().setY(Integer.parseInt(txtPocetnaY.getText()));
+						uzmiSveVrednostiTxt();
+					} else if(trenutnoSelektovan instanceof Kvadrat){
+						pomocna = ((Kvadrat)trenutnoSelektovan).getGoreLevo().getY();
+						((Kvadrat)trenutnoSelektovan).getGoreLevo().setY(Integer.parseInt(txtPocetnaY.getText()));
+						uzmiSveVrednostiTxt();
+					}
+				}catch (Exception ex) {
+					txtPocetnaY.setText("" + pomocna);
+					JOptionPane.showMessageDialog(null, "Unesite pozitivan ceo broj","Greska u unosu", JOptionPane.ERROR_MESSAGE);
+				}
+				ponovoNacrtaj();
+			}
+		});
+		pnlOpcije.add(txtPocetnaY, "cell 1 4,alignx left,aligny center");
+		txtPocetnaY.setColumns(10);
+
+		txtKrajnjaY = new JTextField();
+		txtKrajnjaY.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int pomocna = 0;
+				try{
+					if (trenutnoSelektovan instanceof Linija) {
+						pomocna = ((Linija)trenutnoSelektovan).gettKrajnja().getY();
+						((Linija)trenutnoSelektovan).gettKrajnja().setY(Integer.parseInt(txtKrajnjaY.getText()));
+						uzmiSveVrednostiTxt();
+					}
+				}catch (Exception ex) {
+					txtKrajnjaY.setText("" + pomocna);
+					JOptionPane.showMessageDialog(null, "Unesite pozitivan ceo broj","Greska u unosu", JOptionPane.ERROR_MESSAGE);
+				}
+				ponovoNacrtaj();
 			}
 		});
 
-		JButton btnKvadrat = new JButton("Kvadrat");
-		btnKvadrat.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				kliknutoDugme = (JButton)e.getSource();
+		lblKrajnjaY = new JLabel("Y");
+		pnlOpcije.add(lblKrajnjaY, "cell 2 4,alignx trailing");
+		pnlOpcije.add(txtKrajnjaY, "cell 3 4,alignx left");
+		txtKrajnjaY.setColumns(10);
 
+		lblSirina = new JLabel("");
+		pnlOpcije.add(lblSirina, "cell 4 4");
+
+		txtSirina = new JTextField();
+		txtSirina.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int pomocna = 0;
+				try{
+					if (trenutnoSelektovan instanceof Pravougaonik){
+						pomocna = ((Pravougaonik)trenutnoSelektovan).getSirina();
+						((Pravougaonik)trenutnoSelektovan).setSirina(Integer.parseInt(txtSirina.getText()));
+						uzmiSveVrednostiTxt();
+					}
+				}catch (Exception ex) {
+					txtSirina.setText("" + pomocna);
+					JOptionPane.showMessageDialog(null, "Unesite pozitivan ceo broj","Greska u unosu", JOptionPane.ERROR_MESSAGE);
+				}
+				ponovoNacrtaj();
 			}
 		});
-		pnlOblici.add(btnKvadrat, "cell 1 1,growx,aligny center");
-		pnlOblici.add(btnKrug, "cell 0 2,growx,aligny top");
-
-		JButton btnPravougaonik = new JButton("Pravougaonik");
-		btnPravougaonik.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				kliknutoDugme = (JButton)e.getSource();
-			}
-		});
-		pnlOblici.add(btnPravougaonik, "cell 1 2,growx,aligny center");
+		pnlOpcije.add(txtSirina, "cell 4 5,alignx left");
+		txtSirina.setColumns(10);
 
 		pnlPaletaZaCrtanje = new JPanel();
 		pnlPaletaZaCrtanje.addComponentListener(new ComponentAdapter() {
@@ -229,6 +465,7 @@ public class Crtanje extends JFrame {
 				if(kliknutoDugme == btnTacka){
 					oblik = new Tacka(e.getX(),e.getY(), btnBojaIvice.getBackground());	
 					oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+					stekOblika.add(oblik);
 				}else if(kliknutoDugme == btnLinija){
 					if(brojKlikova == 0){
 						oblik = new Linija(new Tacka(e.getX(),e.getY()),new Tacka(0,0),btnBojaIvice.getBackground());
@@ -238,10 +475,11 @@ public class Crtanje extends JFrame {
 						Linija pomocna = (Linija) oblik;
 						pomocna.settKrajnja(new Tacka(e.getX(), e.getY()));
 						pomocna.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+						stekOblika.add(pomocna);
 						brojKlikova = 0;
 					}
 				}else if(kliknutoDugme == btnKrug ){
-					String unosPoluprecnika = JOptionPane.showInputDialog(null,"Unesite poluprecnik","Krug - unos poluprecnika", JOptionPane.QUESTION_MESSAGE);
+					String unosPoluprecnika = JOptionPane.showInputDialog(null,"Unesite poluprečnik","Krug - unos poluprečnika", JOptionPane.QUESTION_MESSAGE);
 					boolean neispravanUnos = true;
 					while(neispravanUnos == true){
 						try{
@@ -249,15 +487,16 @@ public class Crtanje extends JFrame {
 							PovrsinskiOblik.proveraUnosa(poluprecnik);
 							oblik = new Krug(new Tacka(e.getX(),e.getY()), poluprecnik, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
 							oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+							stekOblika.add(oblik);
 							neispravanUnos = false;
 						}catch(Exception exc){
 							if(exc.getMessage() == "null")
 								return;
-							unosPoluprecnika = JOptionPane.showInputDialog(null,"Unesite ceo broj veci od 0!","Krug - unos poluprecnika", JOptionPane.QUESTION_MESSAGE);
+							unosPoluprecnika = JOptionPane.showInputDialog(null,"Unesite pozitivan ceo broj","Krug - unos poluprecnika", JOptionPane.QUESTION_MESSAGE);
 						}
 					}
 				}else if(kliknutoDugme == btnKvadrat ){
-					String unosStranice = JOptionPane.showInputDialog(null,"Unesite duzinu stranice","Kvadrat - unos stranice", JOptionPane.QUESTION_MESSAGE);
+					String unosStranice = JOptionPane.showInputDialog(null,"Unesite dužinu stranice","Kvadrat - unos stranice", JOptionPane.QUESTION_MESSAGE);
 					boolean neispravanUnos = true;
 					while(neispravanUnos == true){
 						try{
@@ -265,15 +504,16 @@ public class Crtanje extends JFrame {
 							PovrsinskiOblik.proveraUnosa(stranica);
 							oblik = new Kvadrat(new Tacka (e.getX(), e.getY()), stranica, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
 							oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+							stekOblika.add(oblik);
 							neispravanUnos = false;
 						}catch(Exception exc){
 							if(exc.getMessage() == "null")
 								return;
-							unosStranice = JOptionPane.showInputDialog(null,"Unesite ceo broj veci od 0!","Kvadrat - unos stranice", JOptionPane.QUESTION_MESSAGE);
+							unosStranice = JOptionPane.showInputDialog(null,"Unesite pozitivan ceo broj","Kvadrat - unos stranice", JOptionPane.QUESTION_MESSAGE);
 						}
 					}
 				}else if(kliknutoDugme == btnPravougaonik){
-					String unosSirine = JOptionPane.showInputDialog(null,"Unesite sirinu pravougaonika","Pravougaonik - unos sirine", JOptionPane.QUESTION_MESSAGE);
+					String unosSirine = JOptionPane.showInputDialog(null,"Unesite širinu pravougaonika","Pravougaonik - unos širine", JOptionPane.QUESTION_MESSAGE);
 					boolean neispravanUnos = true;
 					int sirina = 0;
 					while(neispravanUnos == true){
@@ -284,7 +524,7 @@ public class Crtanje extends JFrame {
 						}catch(Exception exc){
 							if(exc.getMessage() == "null")
 								return;
-							unosSirine = JOptionPane.showInputDialog(null,"Unesite ceo broj veci od 0!","Pravougaonik - unos sirine", JOptionPane.QUESTION_MESSAGE);
+							unosSirine = JOptionPane.showInputDialog(null,"Unesite pozitivan ceo broj","Pravougaonik - unos širine", JOptionPane.QUESTION_MESSAGE);
 						}
 					}
 
@@ -296,35 +536,45 @@ public class Crtanje extends JFrame {
 							PovrsinskiOblik.proveraUnosa(visina);
 							oblik = new Pravougaonik(new Tacka (e.getX(), e.getY()), sirina, visina, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
 							oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+							stekOblika.add(oblik);
 							neispravanUnos = false;
 						}catch(Exception exc){
 							if(exc.getMessage() == "null")
 								return;
-							unosVisine = JOptionPane.showInputDialog(null,"Unesite ceo broj veci od 0!","Pravougaonik - unos visine", JOptionPane.QUESTION_MESSAGE);
+							unosVisine = JOptionPane.showInputDialog(null,"Unesite pozitivan ceo broj","Pravougaonik - unos visine", JOptionPane.QUESTION_MESSAGE);
 						}
 					}
 				}else if(kliknutoDugme == btnSelektuj){
-
 					if (trenutnoSelektovan != null) {
 						trenutnoSelektovan = null;
+						btnObrisi.setEnabled(true);
 						ponovoNacrtaj();
+
 					}
 
 					for (int i = stekOblika.size()-1; i >= 0 ; i--) {
 						if (stekOblika.get(i).sadrzi(e.getX(), e.getY())) {
-							//repaint();
-							ponovoNacrtaj();
+
 							trenutnoSelektovan = stekOblika.get(i);
+							ponovoNacrtaj();
 							trenutnoSelektovan.selektovan(pnlPaletaZaCrtanje.getGraphics());
+
+							return;
+						}else{
+
 						}
 					}
 
+				}else{
+					trenutnoSelektovan = null;
+					ponovoNacrtaj();
 				}
-				if (oblik != null) {
+				/*Nikako, zato sto mi i na btnSelect kreira oblike
+				 * if (oblik != null) {
 					stekOblika.add(oblik);
-				}
+				}*/
 
-				System.out.println("\n Oblici u staku:");
+				System.out.println("\n Oblici u steku:");
 				for(int i = stekOblika.size()-1; i>= 0; i--)
 					System.out.println(stekOblika.get(i));
 			}
@@ -336,14 +586,156 @@ public class Crtanje extends JFrame {
 
 
 	}
+	public void uzmiSveVrednostiTxt(){
+		try{
+			if (trenutnoSelektovan instanceof Tacka) {
+				((Tacka)trenutnoSelektovan).setX(Integer.parseInt(txtPocetnaX.getText()));
+				((Tacka)trenutnoSelektovan).setY(Integer.parseInt(txtPocetnaY.getText()));
+			} else if(trenutnoSelektovan instanceof Linija) {
+				((Linija)trenutnoSelektovan).gettPocetna().setX(Integer.parseInt(txtPocetnaX.getText()));
+				((Linija)trenutnoSelektovan).gettPocetna().setY(Integer.parseInt(txtPocetnaY.getText()));
+				((Linija)trenutnoSelektovan).gettKrajnja().setX(Integer.parseInt(txtKrajnjaX.getText()));
+				((Linija)trenutnoSelektovan).gettKrajnja().setY(Integer.parseInt(txtKrajnjaY.getText()));
+			} else if(trenutnoSelektovan instanceof Krug){
+				((Krug)trenutnoSelektovan).getCentar().setX(Integer.parseInt(txtPocetnaX.getText()));
+				((Krug)trenutnoSelektovan).getCentar().setY(Integer.parseInt(txtPocetnaY.getText()));
+				((Krug)trenutnoSelektovan).setR(Integer.parseInt(txtDuzina.getText()));
+			} else if(trenutnoSelektovan instanceof Pravougaonik){
+				((Pravougaonik)trenutnoSelektovan).getGoreLevo().setX(Integer.parseInt(txtPocetnaX.getText()));
+				((Pravougaonik)trenutnoSelektovan).getGoreLevo().setY(Integer.parseInt(txtPocetnaY.getText()));
+				((Pravougaonik)trenutnoSelektovan).setSirina(Integer.parseInt(txtSirina.getText()));
+				((Pravougaonik)trenutnoSelektovan).setVisina(Integer.parseInt(txtDuzina.getText()));
+			} else if(trenutnoSelektovan instanceof Kvadrat){
+				((Kvadrat)trenutnoSelektovan).getGoreLevo().setX(Integer.parseInt(txtPocetnaX.getText()));
+				((Kvadrat)trenutnoSelektovan).getGoreLevo().setY(Integer.parseInt(txtPocetnaY.getText()));
+				((Kvadrat)trenutnoSelektovan).setDuzinaStranice(Integer.parseInt(txtDuzina.getText()));
+			}
+		}catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, "Unesite pozitivan ceo broj","Greska u unosu", JOptionPane.ERROR_MESSAGE);
+		}
+		
+	}
 	public void ponovoNacrtaj(){
+		paint(getGraphics());
+
+
+		lblDuzina.setVisible(false);
+		lblKrajnjaX.setVisible(false);
+		lblKrajnjaY.setVisible(false);
+		lblPocetnaX.setVisible(false);
+		lblPocetnaY.setVisible(false);
+		lblSirina.setVisible(false);
+		lblTackaK.setVisible(false);
+		lblTackaP.setVisible(false);
+		txtDuzina.setVisible(false);
+		txtKrajnjaX.setVisible(false);
+		txtKrajnjaY.setVisible(false);
+		txtPocetnaX.setVisible(false);
+		txtPocetnaY.setVisible(false);
+		txtSirina.setVisible(false);
+
 		if (trenutnoSelektovan !=null) {
 			trenutnoSelektovan.selektovan(pnlPaletaZaCrtanje.getGraphics());
-			//trenutnoSelektovan = null;
+			btnObrisi.setEnabled(true);
+
+
+			if(trenutnoSelektovan instanceof PovrsinskiOblik){
+				btnBojaUnutrasnjosti.setBackground(((PovrsinskiOblik) trenutnoSelektovan).getBojaUnutra());
+				btnBojaIvice.setBackground(((PovrsinskiOblik) trenutnoSelektovan).getBoja());
+			}else{
+				btnBojaUnutrasnjosti.setBackground(Color.WHITE);
+				btnBojaIvice.setBackground(trenutnoSelektovan.getBoja());
+			}
+
+			if (trenutnoSelektovan instanceof Tacka) {
+				lblTackaP.setVisible(true);
+				lblTackaP.setText("Tačka");
+				lblPocetnaX.setVisible(true);
+				lblPocetnaY.setVisible(true);
+				txtPocetnaX.setVisible(true);
+				txtPocetnaX.setText("" + ((Tacka) trenutnoSelektovan).getX());
+				txtPocetnaY.setVisible(true);
+				txtPocetnaY.setText("" + ((Tacka) trenutnoSelektovan).getY());
+			} else if (trenutnoSelektovan instanceof Linija){
+				//pocetna tacka
+				lblTackaP.setVisible(true);
+				lblTackaP.setText("Početna tačka");
+				lblPocetnaX.setVisible(true);
+				lblPocetnaY.setVisible(true);
+				txtPocetnaX.setVisible(true);
+				txtPocetnaX.setText("" + ((Linija) trenutnoSelektovan).gettPocetna().getX());
+				txtPocetnaY.setVisible(true);
+				txtPocetnaY.setText("" + ((Linija) trenutnoSelektovan).gettPocetna().getY());
+				//krajnja tacka
+				lblTackaK.setVisible(true);
+				lblTackaK.setText("Krajnja tačka");
+				lblKrajnjaX.setVisible(true);
+				lblKrajnjaY.setVisible(true);
+				txtKrajnjaX.setVisible(true);
+				txtKrajnjaX.setText("" + ((Linija) trenutnoSelektovan).gettKrajnja().getX());
+				txtKrajnjaY.setVisible(true);
+				txtKrajnjaY.setText("" + ((Linija) trenutnoSelektovan).gettKrajnja().getY());
+
+			}else if (trenutnoSelektovan instanceof Krug){
+				//centralna tacka
+				lblTackaP.setVisible(true);
+				lblTackaP.setText("Centar");
+				lblPocetnaX.setVisible(true);
+				lblPocetnaY.setVisible(true);
+				txtPocetnaX.setVisible(true);
+				txtPocetnaX.setText("" + ((Krug) trenutnoSelektovan).getCentar().getX());
+				txtPocetnaY.setVisible(true);
+				txtPocetnaY.setText("" + ((Krug) trenutnoSelektovan).getCentar().getY());
+				//Poluprecnik
+				lblDuzina.setText("Poluprečnik");
+				lblDuzina.setVisible(true);
+				txtDuzina.setVisible(true);
+				txtDuzina.setText("" + ((Krug)trenutnoSelektovan).getR());
+			}else if (trenutnoSelektovan instanceof Pravougaonik){
+				//gore levo tacka
+				lblTackaP.setVisible(true);
+				lblTackaP.setText("Gore levo");
+				lblPocetnaX.setVisible(true);
+				lblPocetnaY.setVisible(true);
+				txtPocetnaX.setVisible(true);
+				txtPocetnaX.setText("" + ((Pravougaonik) trenutnoSelektovan).getGoreLevo().getX());
+				txtPocetnaY.setVisible(true);
+				txtPocetnaY.setText("" + ((Pravougaonik) trenutnoSelektovan).getGoreLevo().getY());
+				//Visina
+				lblDuzina.setText("Visina");
+				lblDuzina.setVisible(true);
+				txtDuzina.setVisible(true);
+				txtDuzina.setText("" + ((Pravougaonik)trenutnoSelektovan).getVisina());
+				//Sirina
+				lblSirina.setText("Širina");
+				lblSirina.setVisible(true);
+				txtSirina.setVisible(true);
+				txtSirina.setText("" + ((Pravougaonik)trenutnoSelektovan).getSirina());
+
+			}else if (trenutnoSelektovan instanceof Kvadrat){
+				//gore levo tacka
+				lblTackaP.setVisible(true);
+				lblTackaP.setText("Gore levo");
+				lblPocetnaX.setVisible(true);
+				lblPocetnaY.setVisible(true);
+				txtPocetnaX.setVisible(true);
+				txtPocetnaX.setText("" + ((Kvadrat) trenutnoSelektovan).getGoreLevo().getX());
+				txtPocetnaY.setVisible(true);
+				txtPocetnaY.setText("" + ((Kvadrat) trenutnoSelektovan).getGoreLevo().getY());
+				//Duzina 
+				lblDuzina.setText("Dužina stranice");
+				lblDuzina.setVisible(true);
+				txtDuzina.setVisible(true);
+				txtDuzina.setText("" + ((Kvadrat)trenutnoSelektovan).getDuzinaStranice());
+			}
+
+		}else{
+			btnObrisi.setEnabled(false);
 		}
 		for (Oblik oblik : stekOblika) {
 			oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
 		}
+
 
 
 	}
