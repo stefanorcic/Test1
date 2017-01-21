@@ -37,6 +37,8 @@ import java.awt.event.MouseEvent;
 import java.util.Stack;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class Crtanje extends JFrame {
 
@@ -47,6 +49,7 @@ public class Crtanje extends JFrame {
 	private Oblik trenutnoSelektovan = null;
 	private int brojKlikova = 0;
 	private Stack<Oblik> stekOblika = new Stack<Oblik>();
+	private JPanel pnlPaletaZaCrtanje;
 	/**
 	 * Launch the application.
 	 */
@@ -122,6 +125,8 @@ public class Crtanje extends JFrame {
 		btnBojaUnutrasnjosti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				izaberiBoju((JButton)e.getSource());
+				((PovrsinskiOblik)trenutnoSelektovan).setBojaUnutra(btnBojaUnutrasnjosti.getBackground());;
+				ponovoNacrtaj();
 			}
 		});
 		btnBojaUnutrasnjosti.setBackground(Color.WHITE);
@@ -136,6 +141,8 @@ public class Crtanje extends JFrame {
 		btnBojaIvice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				izaberiBoju((JButton)e.getSource());
+				trenutnoSelektovan.setBoja(btnBojaIvice.getBackground());
+				ponovoNacrtaj();
 			}
 		});
 		btnBojaIvice.setBackground(Color.BLACK);
@@ -209,7 +216,13 @@ public class Crtanje extends JFrame {
 		});
 		pnlOblici.add(btnPravougaonik, "cell 1 2,growx,aligny center");
 
-		JPanel pnlPaletaZaCrtanje = new JPanel();
+		pnlPaletaZaCrtanje = new JPanel();
+		pnlPaletaZaCrtanje.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				ponovoNacrtaj();
+			}
+		});
 		pnlPaletaZaCrtanje.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -234,8 +247,8 @@ public class Crtanje extends JFrame {
 						try{
 							int poluprecnik = Integer.parseInt(unosPoluprecnika);
 							PovrsinskiOblik.proveraUnosa(poluprecnik);
-							Krug pomocni = new Krug(new Tacka(e.getX(),e.getY()), poluprecnik, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
-							pomocni.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+							oblik = new Krug(new Tacka(e.getX(),e.getY()), poluprecnik, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
+							oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
 							neispravanUnos = false;
 						}catch(Exception exc){
 							if(exc.getMessage() == "null")
@@ -250,8 +263,8 @@ public class Crtanje extends JFrame {
 						try{
 							int stranica = Integer.parseInt(unosStranice);
 							PovrsinskiOblik.proveraUnosa(stranica);
-							Kvadrat pomocni = new Kvadrat(new Tacka (e.getX(), e.getY()), stranica, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
-							pomocni.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+							oblik = new Kvadrat(new Tacka (e.getX(), e.getY()), stranica, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
+							oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
 							neispravanUnos = false;
 						}catch(Exception exc){
 							if(exc.getMessage() == "null")
@@ -281,8 +294,8 @@ public class Crtanje extends JFrame {
 						try{
 							int visina = Integer.parseInt(unosVisine);
 							PovrsinskiOblik.proveraUnosa(visina);
-							Pravougaonik pomocni = new Pravougaonik(new Tacka (e.getX(), e.getY()), sirina, visina, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
-							pomocni.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+							oblik = new Pravougaonik(new Tacka (e.getX(), e.getY()), sirina, visina, btnBojaIvice.getBackground(), btnBojaUnutrasnjosti.getBackground());
+							oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
 							neispravanUnos = false;
 						}catch(Exception exc){
 							if(exc.getMessage() == "null")
@@ -291,15 +304,16 @@ public class Crtanje extends JFrame {
 						}
 					}
 				}else if(kliknutoDugme == btnSelektuj){
-					
+
 					if (trenutnoSelektovan != null) {
 						trenutnoSelektovan = null;
-						
+						ponovoNacrtaj();
 					}
-					
+
 					for (int i = stekOblika.size()-1; i >= 0 ; i--) {
 						if (stekOblika.get(i).sadrzi(e.getX(), e.getY())) {
-							repaint();
+							//repaint();
+							ponovoNacrtaj();
 							trenutnoSelektovan = stekOblika.get(i);
 							trenutnoSelektovan.selektovan(pnlPaletaZaCrtanje.getGraphics());
 						}
@@ -320,8 +334,19 @@ public class Crtanje extends JFrame {
 
 
 
-	}
 
+	}
+	public void ponovoNacrtaj(){
+		if (trenutnoSelektovan !=null) {
+			trenutnoSelektovan.selektovan(pnlPaletaZaCrtanje.getGraphics());
+			//trenutnoSelektovan = null;
+		}
+		for (Oblik oblik : stekOblika) {
+			oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
+		}
+
+
+	}
 	public void izaberiBoju(JButton dugme){
 		JColorChooser jccBoja = new JColorChooser();
 		Color boja = jccBoja.showDialog(null, "Odabir boje", Color.BLACK);

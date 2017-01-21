@@ -139,17 +139,15 @@ public class DlgKvadrat extends JDialog {
 							if(x>0 && y>0 && duzina > 0){
 								pomKvadrat = new Kvadrat(new Tacka(x, y), duzina, bojaIvice, bojaUnutra);
 							}else{
-								exept = new Exception("<html>Koordinate x, y i duzina stranice<br>treba da budu pozitivni celi brojevi</html>");
+								exept = new Exception();
 								throw exept ;
 							}
-							
+
 							setVisible(false);
 
 						}catch (Exception ex) {
 							System.out.println("greska " + ex);
 							lblGreska.setText("<html>Koordinate x, y i duzina stranice<br>treba da budu pozitivni celi brojevi</html>");
-
-
 						}
 					}
 				});
