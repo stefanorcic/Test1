@@ -628,48 +628,62 @@ public class Crtanje extends JFrame {
 
 	}
 	public void selekcijaDugmeta(){
-		if(btnSelektuj.hasFocus()){
+		if(kliknutoDugme == btnSelektuj){
 			btnSelektuj.setBackground(new Color(190, 51, 51).brighter());
 			btnKrug.setBackground(getBackground());
 			btnKvadrat.setBackground(getBackground());
 			btnLinija.setBackground(getBackground());
 			btnPravougaonik.setBackground(getBackground());
 			btnTacka.setBackground(getBackground());
-		}else if(btnKrug.hasFocus()){
+		}else if(kliknutoDugme == btnKrug){
 			btnKrug.setBackground(new Color(190, 51, 51).brighter());
 			btnSelektuj.setBackground(getBackground());
 			btnKvadrat.setBackground(getBackground());
 			btnLinija.setBackground(getBackground());
 			btnPravougaonik.setBackground(getBackground());
 			btnTacka.setBackground(getBackground());
-		}else if(btnKvadrat.hasFocus()){
+		}else if(kliknutoDugme == btnKvadrat){
 			btnKrug.setBackground(getBackground());
 			btnSelektuj.setBackground(getBackground());
 			btnKvadrat.setBackground(new Color(190, 51, 51).brighter());
 			btnLinija.setBackground(getBackground());
 			btnPravougaonik.setBackground(getBackground());
 			btnTacka.setBackground(getBackground());
-		}else if(btnLinija.hasFocus()){
+		}else if(kliknutoDugme == btnLinija){
 			btnKrug.setBackground(getBackground());
 			btnSelektuj.setBackground(getBackground());
 			btnKvadrat.setBackground(getBackground());
 			btnLinija.setBackground(new Color(190, 51, 51).brighter());
 			btnPravougaonik.setBackground(getBackground());
 			btnTacka.setBackground(getBackground());
-		}else if(btnPravougaonik.hasFocus()){
+		}else if(kliknutoDugme == btnPravougaonik){
 			btnKrug.setBackground(getBackground());
 			btnSelektuj.setBackground(getBackground());
 			btnKvadrat.setBackground(getBackground());
 			btnLinija.setBackground(getBackground());
 			btnPravougaonik.setBackground(new Color(190, 51, 51).brighter());
 			btnTacka.setBackground(getBackground());
-		}else if(btnTacka.hasFocus()){
+		}else if(kliknutoDugme == btnTacka){
 			btnTacka.setBackground(new Color(190, 51, 51).brighter());
 			btnKrug.setBackground(getBackground());
 			btnSelektuj.setBackground(getBackground());
 			btnKvadrat.setBackground(getBackground());
 			btnLinija.setBackground(getBackground());
 			btnPravougaonik.setBackground(getBackground());
+		}else if(kliknutoDugme == btnObrisi){
+			btnSelektuj.setBackground(new Color(190, 51, 51).brighter());
+			btnKrug.setBackground(getBackground());
+			btnKvadrat.setBackground(getBackground());
+			btnLinija.setBackground(getBackground());
+			btnPravougaonik.setBackground(getBackground());
+			btnTacka.setBackground(getBackground());
+		}else{
+			btnSelektuj.setBackground(getBackground());
+			btnKrug.setBackground(getBackground());
+			btnKvadrat.setBackground(getBackground());
+			btnLinija.setBackground(getBackground());
+			btnPravougaonik.setBackground(getBackground());
+			btnTacka.setBackground(getBackground());
 		}
 	}
 	public void ponovoNacrtaj(){
