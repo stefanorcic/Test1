@@ -56,6 +56,12 @@ public class Crtanje extends JFrame {
 	private JButton btnObrisi;
 	private JButton btnBojaUnutrasnjosti;
 	private JButton btnBojaIvice;
+	private JButton btnSelektuj;
+	private JButton btnPravougaonik;
+	private JButton btnKvadrat;
+	private JButton btnKrug;
+	private JButton btnTacka;
+	private JButton btnLinija;
 	private Oblik oblik = null;
 	private Oblik trenutnoSelektovan = null;
 	private int brojKlikova = 0;
@@ -114,17 +120,19 @@ public class Crtanje extends JFrame {
 
 
 
-		JButton btnLinija = new JButton("Linija");
+		btnLinija = new JButton("Linija");
 		btnLinija.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kliknutoDugme = (JButton)e.getSource();
+				ponovoNacrtaj();
 			}
 		});
 
-		JButton btnTacka = new JButton("Ta\u010Dka");
+		btnTacka = new JButton("Ta\u010Dka");
 		btnTacka.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kliknutoDugme = (JButton)e.getSource();
+				ponovoNacrtaj();
 			}
 		});
 		pnlOblici.setLayout(new MigLayout("", "[62px][97px]", "[32.00px][50.00px][46.00px]"));
@@ -134,7 +142,7 @@ public class Crtanje extends JFrame {
 		pnlOblici.add(btnTacka, "cell 1 0,growx,aligny center");
 		pnlOblici.add(btnLinija, "cell 0 1,growx,aligny center");
 
-		JButton btnKrug = new JButton("Krug");
+		btnKrug = new JButton("Krug");
 		btnKrug.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kliknutoDugme = (JButton)e.getSource();
@@ -143,7 +151,7 @@ public class Crtanje extends JFrame {
 			}
 		});
 
-		JButton btnKvadrat = new JButton("Kvadrat");
+		btnKvadrat = new JButton("Kvadrat");
 		btnKvadrat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kliknutoDugme = (JButton)e.getSource();
@@ -154,7 +162,7 @@ public class Crtanje extends JFrame {
 		pnlOblici.add(btnKvadrat, "cell 1 1,growx,aligny center");
 		pnlOblici.add(btnKrug, "cell 0 2,growx,aligny center");
 
-		JButton btnPravougaonik = new JButton("Pravougaonik");
+		btnPravougaonik = new JButton("Pravougaonik");
 		btnPravougaonik.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kliknutoDugme = (JButton)e.getSource();
@@ -247,7 +255,7 @@ public class Crtanje extends JFrame {
 		JLabel lblUpravljanje = new JLabel("Upravljanje oblicima");
 		pnlOpcije.add(lblUpravljanje, "cell 1 1,alignx center,aligny top");
 
-		JButton btnSelektuj = new JButton("Selektuj");
+		btnSelektuj = new JButton("Selektuj");
 		btnSelektuj.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kliknutoDugme = (JButton) e.getSource();
@@ -255,6 +263,7 @@ public class Crtanje extends JFrame {
 					trenutnoSelektovan = null;
 					ponovoNacrtaj();
 				}
+				ponovoNacrtaj();
 			}
 		});
 		pnlOpcije.add(btnSelektuj, "cell 3 1,growx,aligny center");
@@ -613,12 +622,56 @@ public class Crtanje extends JFrame {
 		}catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Unesite pozitivan ceo broj","Greska u unosu", JOptionPane.ERROR_MESSAGE);
 		}
-		
+
+	}
+	public void selekcijaDugmeta(){
+		if(btnSelektuj.hasFocus()){
+			btnSelektuj.setBackground(new Color(190, 51, 51).brighter());
+			btnKrug.setBackground(getBackground());
+			btnKvadrat.setBackground(getBackground());
+			btnLinija.setBackground(getBackground());
+			btnPravougaonik.setBackground(getBackground());
+			btnTacka.setBackground(getBackground());
+		}else if(btnKrug.hasFocus()){
+			btnKrug.setBackground(new Color(190, 51, 51).brighter());
+			btnSelektuj.setBackground(getBackground());
+			btnKvadrat.setBackground(getBackground());
+			btnLinija.setBackground(getBackground());
+			btnPravougaonik.setBackground(getBackground());
+			btnTacka.setBackground(getBackground());
+		}else if(btnKvadrat.hasFocus()){
+			btnKrug.setBackground(getBackground());
+			btnSelektuj.setBackground(getBackground());
+			btnKvadrat.setBackground(new Color(190, 51, 51).brighter());
+			btnLinija.setBackground(getBackground());
+			btnPravougaonik.setBackground(getBackground());
+			btnTacka.setBackground(getBackground());
+		}else if(btnLinija.hasFocus()){
+			btnKrug.setBackground(getBackground());
+			btnSelektuj.setBackground(getBackground());
+			btnKvadrat.setBackground(getBackground());
+			btnLinija.setBackground(new Color(190, 51, 51).brighter());
+			btnPravougaonik.setBackground(getBackground());
+			btnTacka.setBackground(getBackground());
+		}else if(btnPravougaonik.hasFocus()){
+			btnKrug.setBackground(getBackground());
+			btnSelektuj.setBackground(getBackground());
+			btnKvadrat.setBackground(getBackground());
+			btnLinija.setBackground(getBackground());
+			btnPravougaonik.setBackground(new Color(190, 51, 51).brighter());
+			btnTacka.setBackground(getBackground());
+		}else if(btnTacka.hasFocus()){
+			btnTacka.setBackground(new Color(190, 51, 51).brighter());
+			btnKrug.setBackground(getBackground());
+			btnSelektuj.setBackground(getBackground());
+			btnKvadrat.setBackground(getBackground());
+			btnLinija.setBackground(getBackground());
+			btnPravougaonik.setBackground(getBackground());
+		}
 	}
 	public void ponovoNacrtaj(){
 		paint(getGraphics());
-
-
+		selekcijaDugmeta();
 		lblDuzina.setVisible(false);
 		lblKrajnjaX.setVisible(false);
 		lblKrajnjaY.setVisible(false);
@@ -635,7 +688,7 @@ public class Crtanje extends JFrame {
 		txtSirina.setVisible(false);
 
 		if (trenutnoSelektovan !=null) {
-			trenutnoSelektovan.selektovan(pnlPaletaZaCrtanje.getGraphics());
+
 			btnObrisi.setEnabled(true);
 
 
@@ -646,6 +699,8 @@ public class Crtanje extends JFrame {
 				btnBojaUnutrasnjosti.setBackground(Color.WHITE);
 				btnBojaIvice.setBackground(trenutnoSelektovan.getBoja());
 			}
+
+
 
 			if (trenutnoSelektovan instanceof Tacka) {
 				lblTackaP.setVisible(true);
@@ -735,8 +790,10 @@ public class Crtanje extends JFrame {
 		for (Oblik oblik : stekOblika) {
 			oblik.crtajSe(pnlPaletaZaCrtanje.getGraphics());
 		}
-
-
+		//Kad se sve iscrta, onda selektuje
+		if (trenutnoSelektovan !=null) {
+			trenutnoSelektovan.selektovan(pnlPaletaZaCrtanje.getGraphics());
+		}
 
 	}
 	public void izaberiBoju(JButton dugme){

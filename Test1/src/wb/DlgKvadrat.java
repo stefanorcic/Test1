@@ -157,6 +157,11 @@ public class DlgKvadrat extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Otka\u017Ei");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						setVisible(false);
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
