@@ -124,6 +124,7 @@ public class Crtanje extends JFrame {
 		btnLinija.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kliknutoDugme = (JButton)e.getSource();
+				trenutnoSelektovan = null;
 				ponovoNacrtaj();
 			}
 		});
@@ -132,6 +133,7 @@ public class Crtanje extends JFrame {
 		btnTacka.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				kliknutoDugme = (JButton)e.getSource();
+				trenutnoSelektovan = null;
 				ponovoNacrtaj();
 			}
 		});
@@ -198,10 +200,11 @@ public class Crtanje extends JFrame {
 				izaberiBoju((JButton)e.getSource());
 				if (trenutnoSelektovan instanceof PovrsinskiOblik) {
 					((PovrsinskiOblik)trenutnoSelektovan).setBojaUnutra(btnBojaUnutrasnjosti.getBackground());
-				} else{
+				} else if(trenutnoSelektovan instanceof Tacka || trenutnoSelektovan instanceof Linija){
 					btnBojaUnutrasnjosti.setBackground(Color.white);
 				}
-
+				if(kliknutoDugme == btnTacka || kliknutoDugme == btnLinija)
+					btnBojaUnutrasnjosti.setBackground(Color.white);
 				ponovoNacrtaj();
 			}
 		});
