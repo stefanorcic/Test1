@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 public class Crtez extends JPanel{
 	int x;
 	int y;
+	int test;
 	public Crtez() {
 		addMouseListener(new MouseAdapter() {
 			@Override
